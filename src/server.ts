@@ -1,9 +1,8 @@
-// server.ts
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-// import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import productRoutes from './routes/product';
 import userRoutes from './routes/user';
 import cartRoutes from './routes/cart';
@@ -17,7 +16,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
-// app.use(cookieParser());
+app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URI!)
   .then(() => console.log('Connected to MongoDB'))

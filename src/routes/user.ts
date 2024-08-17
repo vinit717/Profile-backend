@@ -1,4 +1,3 @@
-// routes/user.ts
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
@@ -65,6 +64,11 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
+});
+
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: 'Logout successful' });
 });
 
 export default router;
