@@ -19,9 +19,15 @@ app.use(express.json());
 app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URI!)
-  .then(() => console.log('Connected to MongoDB'))
+  .then(() => {
+    console.log('Connected to MongoDB');
+    console.log('Database name:', mongoose.connection.db?.databaseName);
+  })
   .catch((err) => console.error('MongoDB connection error:', err));
 
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB error:', err);
+});
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
