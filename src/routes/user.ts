@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
-import { encryptToken, signToken } from '../utils/jwt';
+import { encryptToken, signToken, verifyToken } from '../utils/jwt';
 
 const router = express.Router();
 
@@ -73,6 +73,32 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+router.get('/self', async (req, res) => {
+  let token = req.headers.authorization?.split(' ')[1]; // Get token from Authorization header
+  if (!token) {
+    token = req.cookies.token; // Fallback to token from cookies if not in header
+  }
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    const user = await User.findById(decoded.id).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+});
+
 
 router.post('/logout', (req, res) => {
   res.clearCookie('token');
